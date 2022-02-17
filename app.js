@@ -14,6 +14,8 @@ const corsOptions ={
 app.use(express.json());
 app.use(cors(corsOptions))
 
+app.options('*', cors())
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {

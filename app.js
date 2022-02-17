@@ -50,6 +50,7 @@ app.get('/getlatestevent', async (req, res) => {
 
 app.delete('/deleteevent/:id', async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       const client = await pool.connect();
@@ -63,6 +64,7 @@ app.delete('/deleteevent/:id', async (req, res) => {
 
 app.post('/addevent', async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       console.log(`insert into events (title,date) values ('${req.body.title}',${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"})`);

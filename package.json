@@ -1,5 +1,7 @@
 {
-  "start": "node app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "express": "^4.17.3",
     "pg": "^8.7.3"

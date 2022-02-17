@@ -14,6 +14,8 @@ const pool = new Pool({
 });
 
 app.get('/getallevents', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       const client = await pool.connect();
       const result = await client.query('select * from events where date > now() order by date');
@@ -30,6 +32,8 @@ app.get('/getallevents', async (req, res) => {
   })
 
 app.get('/getlatestevent', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       const client = await pool.connect();
       const result = await client.query('select * from events where date > now() order by date limit 1');
@@ -45,6 +49,8 @@ app.get('/getlatestevent', async (req, res) => {
 })
 
 app.delete('/deleteevent/:id', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       const client = await pool.connect();
       await client.query('delete from events where id = $1',[req.params.id]);
@@ -56,6 +62,8 @@ app.delete('/deleteevent/:id', async (req, res) => {
 })
 
 app.post('/addevent', async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     try {
       console.log(`insert into events (title,date) values ('${req.body.title}',${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"})`);
       const client = await pool.connect();

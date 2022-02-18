@@ -1,34 +1,18 @@
 const express = require('express');
-const cors = require('express');
 const { Pool } = require('pg');
 const { Event } = require('./classes/Event');
 const moment = require('moment');
 const app = express();
 
-const corsOptions ={
-  origin:'*', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200,
-}
-
 app.use(function (req, res, next) {
-
-  // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
   next();
 });
+
+app.use(express.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -71,9 +55,17 @@ app.get('/getlatestevent', async (req, res) => {
 app.delete('/deleteevent/:id', async (req, res) => {
     try {
       const client = await pool.connect();
-      await client.query('delete from events where id = $1',[req.params.id]);
+      await client.query('delete from events where id = $1',[req.params.id]).then(async () => {
+        const result = await client.query('select * from events where date > now() order by date');
+        let eventarray = [];
+        result['rows'].forEach(event => {
+            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("hh:mm:ss")));
+        });
+        res.send(eventarray);
+      }).catch(err =>{
+        res.status(400).send(err);
+      });
       client.release();
-      res.send("successful deletion");
     } catch (err) {
       res.status(400).send(err);
     }
@@ -81,16 +73,23 @@ app.delete('/deleteevent/:id', async (req, res) => {
 
 app.post('/addevent', async (req, res) => {
     try {
-      console.log(`insert into events (title,date) values ('${req.body.title}',${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"})`);
       const client = await pool.connect();
-      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"}')`);
+      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"}')`).then(async () => {
+        const result = await client.query('select * from events where date > now() order by date');
+        let eventarray = [];
+        result['rows'].forEach(event => {
+            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("hh:mm:ss")));
+        });
+        res.send(eventarray);
+      }).catch(err =>{
+        res.status(400).send(err);
+      });
       client.release();
-      res.send("successful creation");
     } catch (err) {
       res.status(400).send(err);
     }
 })
 
-app.listen(process.env.PORT || 5000,() => {
+app.listen(process.env.PORT || 8080,() => {
     console.log('server running');
 });

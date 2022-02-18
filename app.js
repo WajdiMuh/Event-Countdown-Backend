@@ -27,7 +27,7 @@ app.get('/getallevents', async (req, res) => {
       const result = await client.query('select * from events where date > now() order by date');
       let eventarray = [];
       result['rows'].forEach(event => {
-          eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("hh:mm:ss")));
+          eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
       });
       res.send(eventarray);
       client.release();
@@ -46,7 +46,7 @@ app.get('/getlatestevent', async (req, res) => {
       if(!latesteventjson){
         throw "no event";
       }
-      res.send(new Event(latesteventjson["id"],latesteventjson["title"],moment(latesteventjson["date"]).format("yyyy-MM-DD") + "T" + moment(latesteventjson["date"]).format("hh:mm:ss")));
+      res.send(new Event(latesteventjson["id"],latesteventjson["title"],moment(latesteventjson["date"]).format("yyyy-MM-DD") + "T" + moment(latesteventjson["date"]).format("HH:mm:ss")));
     } catch (err) {
       res.status(400).send(err);
     }
@@ -59,7 +59,7 @@ app.delete('/deleteevent/:id', async (req, res) => {
         const result = await client.query('select * from events where date > now() order by date');
         let eventarray = [];
         result['rows'].forEach(event => {
-            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("hh:mm:ss")));
+            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
         });
         res.send(eventarray);
       }).catch(err =>{
@@ -74,11 +74,11 @@ app.delete('/deleteevent/:id', async (req, res) => {
 app.post('/addevent', async (req, res) => {
     try {
       const client = await pool.connect();
-      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("hh:mm:ss.SSS") + "Z"}')`).then(async () => {
+      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("HH:mm:ss.SSS") + "Z"}')`).then(async () => {
         const result = await client.query('select * from events where date > now() order by date');
         let eventarray = [];
         result['rows'].forEach(event => {
-            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("hh:mm:ss")));
+            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
         });
         res.send(eventarray);
       }).catch(err =>{

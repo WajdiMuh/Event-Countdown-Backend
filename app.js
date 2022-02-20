@@ -90,6 +90,25 @@ app.post('/addevent', async (req, res) => {
     }
 })
 
+app.put('/editevent/:id', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    await client.query(`update events set title = '${req.body.title}', date = '${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("HH:mm:ss.SSS") + "Z"}' where id = $1;`,[req.params.id]).then(async () => {
+      const result = await client.query('select * from events where date > now() order by date');
+      let eventarray = [];
+      result['rows'].forEach(event => {
+          eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
+      });
+      res.send(eventarray);
+    }).catch(err =>{
+      res.status(400).send(err);
+    });
+    client.release();
+  } catch (err) {
+    res.status(400).send(err);
+  }
+})
+
 app.listen(process.env.PORT || 8080,() => {
     console.log('server running');
 });

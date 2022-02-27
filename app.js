@@ -4,6 +4,12 @@ const { Event } = require('./classes/Event');
 const moment = require('moment');
 const app = express();
 
+var types = require('pg').types
+var parsedate = function(val) {
+  return val === null ? null : moment(val).format("yyyy-MM-DDTHH:mm:ssZ");
+}
+types.setTypeParser(types.builtins.TIMESTAMPTZ, parsedate);
+
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -27,7 +33,7 @@ app.get('/getallevents', async (req, res) => {
       const result = await client.query('select * from events where date > now() order by date');
       let eventarray = [];
       result['rows'].forEach(event => {
-          eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
+          eventarray.push(new Event(event["id"],event["title"],event["date"]));
       });
       res.send(eventarray);
       client.release();
@@ -46,7 +52,8 @@ app.get('/getlatestevent', async (req, res) => {
       if(!latesteventjson){
         throw "no event";
       }
-      res.send(new Event(latesteventjson["id"],latesteventjson["title"],moment(latesteventjson["date"]).format("yyyy-MM-DD") + "T" + moment(latesteventjson["date"]).format("HH:mm:ss")));
+      console.log(latesteventjson);
+      res.send(new Event(latesteventjson["id"],latesteventjson["title"],latesteventjson["date"]));
     } catch (err) {
       res.status(400).send(err);
     }
@@ -59,7 +66,7 @@ app.delete('/deleteevent/:id', async (req, res) => {
         const result = await client.query('select * from events where date > now() order by date');
         let eventarray = [];
         result['rows'].forEach(event => {
-            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
+          eventarray.push(new Event(event["id"],event["title"],event["date"]));
         });
         res.send(eventarray);
       }).catch(err =>{
@@ -74,11 +81,11 @@ app.delete('/deleteevent/:id', async (req, res) => {
 app.post('/addevent', async (req, res) => {
     try {
       const client = await pool.connect();
-      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("HH:mm:ss.SSS") + "Z"}')`).then(async () => {
+      await client.query(`insert into events (title,date) values ('${req.body.title}','${moment(req.body.date).format("yyyy-MM-DDTHH:mm:ssZ")}')`).then(async () => {
         const result = await client.query('select * from events where date > now() order by date');
         let eventarray = [];
         result['rows'].forEach(event => {
-            eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
+          eventarray.push(new Event(event["id"],event["title"],event["date"]));
         });
         res.send(eventarray);
       }).catch(err =>{
@@ -93,11 +100,11 @@ app.post('/addevent', async (req, res) => {
 app.put('/editevent/:id', async (req, res) => {
   try {
     const client = await pool.connect();
-    await client.query(`update events set title = '${req.body.title}', date = '${moment(req.body.date).format("yyyy-MM-DD") + "T" + moment(req.body.date).format("HH:mm:ss.SSS") + "Z"}' where id = $1;`,[req.params.id]).then(async () => {
+    await client.query(`update events set title = '${req.body.title}', date = '${moment(req.body.date).format("yyyy-MM-DDTHH:mm:ssZ")}' where id = $1;`,[req.params.id]).then(async () => {
       const result = await client.query('select * from events where date > now() order by date');
       let eventarray = [];
       result['rows'].forEach(event => {
-          eventarray.push(new Event(event["id"],event["title"],moment(event["date"]).format("yyyy-MM-DD") + "T" + moment(event["date"]).format("HH:mm:ss")));
+        eventarray.push(new Event(event["id"],event["title"],event["date"]));
       });
       res.send(eventarray);
     }).catch(err =>{

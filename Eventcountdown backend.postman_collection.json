@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "6dc27195-2677-4be0-a758-3a4049cedcec",
+		"name": "Eventcountdown backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get latest event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://eventcountdown.herokuapp.com/getlatestevent",
+					"protocol": "https",
+					"host": [
+						"eventcountdown",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"getlatestevent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://eventcountdown.herokuapp.com/getallevents",
+					"protocol": "https",
+					"host": [
+						"eventcountdown",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"getallevents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete event",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/deleteevent/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"deleteevent",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\":\"hello\",\n    \"date\":\"2028-02-18T22:27:26+04:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/addevent",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"addevent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit event",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\":\"test time\",\n    \"date\":\"2077-02-18T22:27:26+04:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/editevent/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"editevent",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "35"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

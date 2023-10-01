@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS events (
+    id serial PRIMARY KEY,
+    title TEXT NOT NULL,
+    date TIMESTAMPTZ NOT NULL
+);

@@ -20,12 +20,25 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
+const pool = (() => {
+  try {
+    return new Pool({
+      connectionString: eval(process.env.DATABASE_URL),
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      return new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      });
+    }
   }
-});
+})();
 
 app.get('/getallevents', async (req, res) => {
     try {

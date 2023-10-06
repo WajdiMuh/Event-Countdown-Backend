@@ -1,0 +1,7 @@
+node_modules
+.gitignore
+.git
+table_schema.sql
+Eventcountdown backend.postman_collection.json
+Dockerfile*
+docker*

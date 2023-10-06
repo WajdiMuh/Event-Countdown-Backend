@@ -1,0 +1,7 @@
+FROM postgres:16-alpine
+
+WORKDIR /docker-entrypoint-initdb.d
+
+COPY table_schema.sql .
+
+ENV POSTGRES_DB=event_countdown_db

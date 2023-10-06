@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  db:
+    image: db
+    container_name: db_container
+    env_file:
+      - variables.env
+    build:
+      dockerfile: Dockerfile.db
+
+  backend:
+    image: backend
+    container_name: backend_container
+    env_file:
+      - variables.env
+    environment:
+      - DATABASE_URL='postgresql://' + process.env.POSTGRES_USER + ':' + process.env.POSTGRES_PASSWORD + '@db:5432/event_countdown_db?sslmode=disable'
+    build:
+      dockerfile: Dockerfile.backend
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
